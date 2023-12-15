@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Budget
+{% endblock %}
+
+{% block content %}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="./">Personal Finance Tracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="./report">Report</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./account">Account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./investment">Investment</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./budget">Budget</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./goal">Goal</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./expenses">Expenses</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./income">Income</a>
+          </li>
+          <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="btn btn-danger">Logout</button>
+          </form>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mt-5">
+    <h2 class="mb-4">This is your Budget page, {{ session['user_name'] }}!</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-info">
+          <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="mb-3">
+      <h4>Add your Budget</h4>
+      <form action="{{ url_for('create_budget') }}" method="POST">
+        <div class="mb-3">
+          <label for="amount" class="form-label">Amount</label>
+          <input type="text" class="form-control" id="amount" name="amount" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Start Date</label>
+          <input type="date" class="form-control" id="startDate" name="startDate" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="endDate" class="form-label">End Date</label>
+          <input type="date" class="form-control" id="endDate" name="endDate" required />
+        </div>
+
+        <button type="submit" class="btn btn-success">Create Budget</button>
+      </form>
+    </div>
+
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Budget ID</th>
+            <th>User ID</th>
+            <th>Amount</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for budget in data %}
+            {% if budget['UserID'] == session['user_id'] %}
+              <tr>
+                <td>{{ budget['Budget ID'] }}</td>
+                <td>{{ budget['User ID'] }}</td>
+                <td>{{ budget['Amount'] }}</td>
+                <td>{{ budget['Start Date'] }}</td>
+                <td>{{ budget['Actions'] }}</td>
+                <td>
+                  <form action="{{ url_for('delete_budget', budget_id = budget['BudgetID']) }}" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% for budget in data %}
+      {% if budget['UserID'] == session['user_id'] %}
+       
+        <h4>Update Budget</h4>
+        <form action="{{ url_for('update_budget', budget_id = budget['BudgetID']) }}" method="POST">
+          <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="text" class="form-control" id="amount" name="amount" value="{{ budget[2] }}"  />
+          </div>
+
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Date Occurred</label>
+            <input type="date" class="form-control" id="startDate" name="startDate" value="{{ budget[3] }}" />
+          </div>
+
+          <div class="mb-3">
+            <label for="endDate" class="form-label">Description</label>
+            <input type="date" class="form-control" id="endDate" name="endDate" value="{{ budget[4] }}" />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Update Budget</button>
+        </form>
+      {% endif %}
+    {% endfor %}
+
+    
+  </div>
+{% endblock %}

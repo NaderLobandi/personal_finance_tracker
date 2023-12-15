@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Report{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="./">Personal Finance Tracker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./report">Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./account">Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./report">report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./budget">Budget</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./goal">Goal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./expenses">Expenses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./income">Income</a>
+                    </li>
+                    <form action="{{ url_for('logout') }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mt-5">
+        <h2 class="mb-4">Welcome, {{ session['user_name'] }}!</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <p>This is the Report page. You are logged in.</p> 
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Report ID</th>
+                    <th>User ID</th>
+                    <th>Content</th>
+                    <th>Date Occurred</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in data %}
+                    <tr>
+                        <td>{{ report['ReportID'] }}</td>
+                        <td>{{ report['UserID'] }}</td>
+                        <td>{{ report['Content'] }}</td>
+                        <td>{{ report['DateOccurred'] }}</td>       
+
+                    </tr>
+                {% endfor %}          
+            </tbody>
+        </table>
+
+       
+    </div>
+{% endblock %}

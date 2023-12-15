@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Expenses
+{% endblock %}
+
+{% block content %}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="./">Personal Finance Tracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="./report">Report</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./account">Account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./investment">Investment</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./budget">Budget</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./goal">Goal</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./expenses">Expenses</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./income">Income</a>
+          </li>
+          <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="btn btn-danger">Logout</button>
+          </form>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mt-5">
+    <h2 class="mb-4">This is your Expenses's details page, {{ session['user_name'] }}!</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-info">
+          <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="mb-3">
+      <h4>Add an expense</h4>
+      <form action="{{ url_for('create_expense') }}" method="POST">
+        <div class="mb-3">
+          <label for="amount" class="form-label">Amount</label>
+          <input type="text" class="form-control" id="amount" name="amount" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="date_occurred" class="form-label">Date Occurred</label>
+          <input type="date" class="form-control" id="date_occurred" name="date_occurred" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="Categoryid" class="form-label">CategoryID</label>
+          <select class="form-control" id="Categoryid" name="Categoryid" required>
+            <option value="1">Food</option>
+            <option value="2">Rent</option>
+            <option value="3">Groceries</option>
+            <option value="4">Laundry</option>
+            <option value="5">Something else</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Create Expense</button>
+      </form>
+    </div>
+    <div class="mb-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ExpenseID</th>
+            <th>UserID</th>
+            <th>Amount</th>
+            <th>DateOccurred</th>
+            <th>Description</th>
+            <th>CategoryType</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for expense in data %}
+            <tr>
+              <td>{{ expense['ExpenseID'] }}</td>
+              <td>{{ expense['UserID'] }}</td>
+              <td>{{ expense['Amount'] }}</td>
+              <td>{{ expense['DateOccurred'] }}</td>
+              <td>{{ expense['Description'] }}</td>
+              <td>{{ expense['CategoryType'] }}</td>
+              <td>
+                <form action="{{ url_for('delete_expense', expense_id = expense['ExpenseID']) }}" method="POST">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% for expense in data %}
+    {% if expense['UserID'] == session['user_id'] %}
+      <h2>Update Expenses</h2>
+      <form action="{{ url_for('update_expense', expense_id = expense['ExpenseID']) }}" method="POST">
+          <div class="mb-3">
+              <label for="amount" class="form-label">Amount</label>
+              <input type="text" class="form-control" id="amount" name="amount" value="{{ expense['Amount'] }}" required />
+            </div>
+  
+            <div class="mb-3">
+              <label for="date_occurred" class="form-label">Date Occurred</label>
+              <input type="date" class="form-control" id="date_occurred" name="date_occurred" value="{{ expense['DateOccurred'] }}" required />
+            </div>
+  
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" name="description" rows="3" required>{{ expense['Description'] }}</textarea>
+            </div>
+            <div class="mb-3">
+              <label for="Categoryid" class="form-label">Category ID</label>
+              <select class="form-control" id="Categoryid" name="Categoryid" required>
+                  <option value="1" {% if expense['CategoryID'] == 1 %}selected{% endif %}>Food</option>
+                  <option value="2" {% if expense['CategoryID'] == 2 %}selected{% endif %}>Rent</option>
+                  <option value="3" {% if expense['CategoryID'] == 3 %}selected{% endif %}>Groceries</option>
+                  <option value="4" {% if expense['CategoryID'] == 4 %}selected{% endif %}>Laundry</option>
+                  <option value="5" {% if expense['CategoryID'] == 5 %}selected{% endif %}>Something else</option>
+              </select>
+          </div>
+        <button type="submit" class="btn btn-primary">Update Information</button>
+      </form>
+    {% endif %}
+  {% endfor %}
+  </div>
+{% endblock %}
